@@ -48,17 +48,23 @@
     {% if error %}
         <h3 style="color: red;">{{ error }}</h3>
     {% endif %}
+    <div class="Original">
     {% if uploaded %}
         <h3>Original Image:</h3>
         <img src="{{ url_for('static', filename='uploads/' + uploaded) }}" alt="Uploaded Image" width="300">
     {% endif %}
+    </div>  
+    <div
     {% if processed %}
         <h3>Processed Image:</h3>
         <img src="{{ url_for('static', filename='uploads/' + processed) }}" alt="Processed Image" width="300">
     {% endif %}
+    </div>
+    <div
 {% if(prediction) %}
     <h3>AI Prediction: {{ prediction }}</h3>
 {% endif %}
+</div>
 </div> 
 </body>
 </html>
