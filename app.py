@@ -3,7 +3,13 @@ import os
 import cv2
 from werkzeug.utils import secure_filename
 
-import kagglehub
+
+
+import tensorflow as tf
+from PIL import Image
+import numpy as np
+
+model = tf.keras.models.load_model('model.h5')
 
 
 app = Flask(__name__)
@@ -11,10 +17,7 @@ app = Flask(__name__)
 UPLOAD_FOLDER = 'static/uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-# Download latest version
-path = kagglehub.dataset_download("paultimothymooney/chest-xray-pneumonia")
 
-print("Path to dataset files:", path)
 
 #Create folder if it doesn't exist
 if not os.path.exists(UPLOAD_FOLDER):
@@ -48,13 +51,18 @@ def upload():
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     mean_intensity = gray.mean()
 
-    if mean_intensity > 100:
+    img = Image.open(filepath).resize((150, 150))
+    img_array = np.array(img) / 255.0
+    img_array = np.expand_dims(img_array, axis=0)
+    
+    prediction_value  = model.predict(img_array)[0][0]
+    if prediction_value > 0.5:
+        prediction = "Pneumonia"
+        print("The image is Pneumonia.")    
+    else:
         prediction = "Normal"
         print("The image is Normal.")
-    else:
-        prediction = "Abnormal"
-        print("The image is Abnormal.")
-    confidence = 0.85 if prediction == "Normal" else 0.75
+    confidence = prediction_value if prediction == "Pneumonia" else 1 - prediction_value
     print(f"Confidence: {confidence * 100:.2f}%")
 
     edges = cv2.Canny(gray, 100, 200)
