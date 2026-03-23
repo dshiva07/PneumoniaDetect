@@ -3,10 +3,18 @@ import os
 import cv2
 from werkzeug.utils import secure_filename
 
+import kagglehub
+
+
 app = Flask(__name__)
 
 UPLOAD_FOLDER = 'static/uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+# Download latest version
+path = kagglehub.dataset_download("paultimothymooney/chest-xray-pneumonia")
+
+print("Path to dataset files:", path)
 
 #Create folder if it doesn't exist
 if not os.path.exists(UPLOAD_FOLDER):
@@ -48,7 +56,7 @@ def upload():
         print("The image is Abnormal.")
     confidence = 0.85 if prediction == "Normal" else 0.75
     print(f"Confidence: {confidence * 100:.2f}%")
-    
+
     edges = cv2.Canny(gray, 100, 200)
     processed_filename = 'processed_' + filename
     processed_path = os.path.join(app.config['UPLOAD_FOLDER'], processed_filename)
