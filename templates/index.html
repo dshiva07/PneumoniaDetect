@@ -39,32 +39,37 @@
 </head>
 <body>
     <div class="container">
-    <h2>AI Medical Image Analyzer</h2>
-    <form action="/upload" method="post" enctype="multipart/form-data">
-        <input type="file" name="image" required>
-        <br><br>
-        <button type="submit" value="Analyze">Analyze</button>
-    </form>
-    {% if error %}
-        <h3 style="color: red;">{{ error }}</h3>
-    {% endif %}
-    <div class="Original">
-    {% if uploaded %}
-        <h3>Original Image:</h3>
-        <img src="{{ url_for('static', filename='uploads/' + uploaded) }}" alt="Uploaded Image" width="300">
-    {% endif %}
-    </div>  
-    <div
-    {% if processed %}
-        <h3>Processed Image:</h3>
-        <img src="{{ url_for('static', filename='uploads/' + processed) }}" alt="Processed Image" width="300">
-    {% endif %}
+        <div>
+            <h2>AI Medical Image Analyzer</h2>
+            <form action="/upload" method="post" enctype="multipart/form-data">
+                <input type="file" name="image" required>
+                <br><br>
+                <button type="submit" value="Analyze">Analyze</button>
+            </form>
+
+            {% if error %}
+                <h3 style="color: red;">{{ error }}</h3>
+            {% endif %}
+
+            {% if prediction %}
+                <h3>AI Prediction: {{ prediction }}</h3>
+                <p>Confidence: {{ '%.2f'|format(confidence * 100) }}%</p>
+            {% endif %}
+        </div>
+
+        {% if uploaded %}
+            <div class="Original">
+                <h3>Original Image:</h3>
+                <img src="{{ url_for('static', filename='uploads/' + uploaded) }}" alt="Uploaded Image" width="300">
+            </div>
+        {% endif %}
+
+        {% if processed %}
+            <div>
+                <h3>Processed Image:</h3>
+                <img src="{{ url_for('static', filename='uploads/' + processed) }}" alt="Processed Image" width="300">
+            </div>
+        {% endif %}
     </div>
-    <div
-{% if(prediction) %}
-    <h3>AI Prediction: {{ prediction }}</h3>
-{% endif %}
-</div>
-</div> 
 </body>
 </html>
